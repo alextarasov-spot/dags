@@ -65,6 +65,8 @@ t1 = SparkKubernetesOperator(
     namespace="spark-jobs",
     application_file="spark_k8s_operator_spark_pi.yaml",
     kubernetes_conn_id="in_cluster",
+    api_group="sparkoperator.k8s.io",
+    api_version="v1beta2",
     do_xcom_push=True,
     dag=dag,
 )
@@ -72,7 +74,10 @@ t1 = SparkKubernetesOperator(
 t2 = SparkKubernetesSensor(
     task_id='spark_pi_monitor',
     namespace="spark-jobs",
-    application_name="{{task_instance.xcom_pull(task_ids='spark_pi_submit')['metadata']['name']}}",
+    application_name="{{ task_instance.xcom_pull(task_ids='spark_pi_submit')['metadata']['name'] }}",
+    attach_log=True,
+    api_group="sparkoperator.k8s.io",
+    api_version="v1beta2",
     kubernetes_conn_id="in_cluster",
     dag=dag
 )

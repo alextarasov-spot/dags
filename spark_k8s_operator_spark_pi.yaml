@@ -22,29 +22,29 @@ metadata:
   name: "spark-pi-{{ ds }}-{{ task_instance.try_number }}"
   namespace: spark-jobs
 spec:
-  type: Python
-  pythonVersion: "2"
+  type: Scala
   mode: cluster
-  image: "gcr.io/spark-operator/spark-py:v3.0.0"
+  image: "gcr.io/spark-operator/spark:v2.4.5"
   imagePullPolicy: Always
-  mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
-  sparkVersion: "3.0.0"
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.11-2.4.5.jar"
+  arguments:
+    - "100000"
+  sparkVersion: "2.4.5"
   restartPolicy:
     type: OnFailure
-    onFailureRetries: 3
-    onFailureRetryInterval: 10
-    onSubmissionFailureRetries: 5
-    onSubmissionFailureRetryInterval: 20
+    onFailureRetries: 1
+    onFailureRetryInterval: 30
   driver:
     cores: 1
     coreLimit: "1200m"
     memory: "512m"
     labels:
-      version: 3.0.0
+      version: 2.4.5
     serviceAccount: spark
   executor:
     cores: 1
-    instances: 1
+    instances: 4
     memory: "512m"
     labels:
-      version: 3.0.0
+      version: 2.4.5
